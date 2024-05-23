@@ -4,6 +4,8 @@ import random
 import time
 import tkinter as tk
 from threading import Thread
+from ttkthemes import ThemedTk
+from tkinter import ttk
 import pygetwindow as gw
 import sys
 import string
@@ -32,6 +34,10 @@ time.sleep(2)
 
 screen_width, screen_height = pyautogui.size()
 
+# Set new window dimensions to stack on top of each other on the left side of the screen
+window_width = screen_width // 2
+window_height = screen_height // 2
+
 notepad_window = None
 for window in gw.getWindowsWithTitle('Untitled - Notepad'):
     if window.title == 'Untitled - Notepad':
@@ -40,22 +46,26 @@ for window in gw.getWindowsWithTitle('Untitled - Notepad'):
 
 if notepad_window:
     notepad_window.moveTo(0, 0)
-    notepad_window.resizeTo(screen_width // 2, screen_height)
+    notepad_window.resizeTo(window_width, window_height)
 
 window_open = True
-root = tk.Tk()
 
-window_width = screen_width // 2
-window_height = screen_height
-position_top = 0
-position_right = screen_width // 2
-root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+# Use ThemedTk for a modern look
+root = ThemedTk(theme='sun-valley')
 
-root.configure(bg='#2e2e2e')
-frame = tk.Frame(root, bg='#3c3f41', bd=0)
+# Position the Tkinter window below the Notepad window
+position_top = window_height
+position_left = 0
+root.geometry(f"{window_width}x{window_height}+{position_left}+{position_top}")
+
+frame = ttk.Frame(root)
 frame.pack(fill='both', expand=True, padx=20, pady=20)
 
-exit_button = tk.Button(frame, text="Exit", command=on_closing, bg="#ff4d4d", fg="white", font=("Helvetica", 18), width=20, height=2, relief="flat")
+# Adjust button style for better visibility and size
+style = ttk.Style()
+style.configure('TButton', font=('Helvetica', 18), padding=[10, 10], width=20)
+
+exit_button = ttk.Button(frame, text="Exit", command=on_closing, style='TButton')
 exit_button.pack(pady=20)
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
